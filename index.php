@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.2
+Version: 1.4
 Author: Chris Garrett
 */
 
@@ -109,12 +109,15 @@ function series_shortcode($atts) {
         return '';
     }
 
+    $series_name = $atts['name'];
     $current_post_id = get_the_ID();
+    $series_title = get_option('series_' . $series_name . '_title', '');
+    $series_description = get_option('series_' . $series_name . '_description', '');
 
     $args = array(
         'post_type' => 'post',
         'meta_key' => '_series',
-        'meta_value' => $atts['name'],
+        'meta_value' => $series_name,
         'orderby' => 'date',
         'order' => 'ASC',
         'posts_per_page' => -1,
@@ -122,20 +125,81 @@ function series_shortcode($atts) {
 
     $query = new WP_Query($args);
     if ($query->have_posts()) {
-        $output = '<ul>';
+        $output = '<div class="custom-series">';
+        if ($series_title) {
+            $output .= '<h2 class="custom-series-title">' . esc_html($series_title) . '</h2>';
+        }
+        if ($series_description) {
+            $output .= '<div class="custom-series-description">' . wp_kses_post($series_description) . '</div>';
+        }
+        $output .= '<ul class="custom-series-list">';
         while ($query->have_posts()) {
             $query->the_post();
             if (get_the_ID() == $current_post_id) {
-                $output .= '<li>' . get_the_title() . '</li>';
+                $output .= '<li class="custom-series-list-item current">' . get_the_title() . '</li>';
             } else {
-                $output .= '<li><a href="' . get_permalink() . '">' . get_the_title() . '</a></li>';
+                $output .= '<li class="custom-series-list-item"><a href="' . get_permalink() . '">' . get_the_title() . '</a></li>';
             }
         }
-        $output .= '</ul>';
+        $output .= '</ul></div>';
         wp_reset_postdata();
         return $output;
     } else {
-        return 'No posts found in this series.';
+        return '<div class="custom-series">No posts found in this series.</div>';
     }
 }
 add_shortcode('series', 'series_shortcode');
+
+// Create admin menu for Series management
+function series_admin_menu() {
+    add_menu_page('Series Management', 'Series', 'manage_options', 'series-management', 'series_management_page', 'dashicons-editor-ol', 20);
+}
+add_action('admin_menu', 'series_admin_menu');
+
+// Display Series Management Page
+function series_management_page() {
+    global $wpdb;
+    
+    // Save series title and description
+    if (isset($_POST['save_series'])) {
+        $series = sanitize_text_field($_POST['series']);
+        $title = sanitize_text_field($_POST['title']);
+        $description = sanitize_textarea_field($_POST['description']);
+        update_option('series_' . $series . '_title', $title);
+        update_option('series_' . $series . '_description', $description);
+        echo '<div class="updated"><p>Series details saved.</p></div>';
+    }
+
+    // Get all unique series values
+    $series_list = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_series' ORDER BY meta_value ASC");
+
+    ?>
+    <div class="wrap">
+        <h1>Series Management</h1>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th scope="col">Series</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($series_list as $series): ?>
+                    <tr>
+                        <td><?php echo esc_html($series); ?></td>
+                        <form method="post">
+                            <td><input type="text" name="title" value="<?php echo esc_attr(get_option('series_' . $series . '_title')); ?>" /></td>
+                            <td><textarea name="description"><?php echo esc_textarea(get_option('series_' . $series . '_description')); ?></textarea></td>
+                            <td>
+                                <input type="hidden" name="series" value="<?php echo esc_attr($series); ?>" />
+                                <input type="submit" name="save_series" class="button-primary" value="Save" />
+                            </td>
+                        </form>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
