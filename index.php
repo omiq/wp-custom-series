@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.5
+Version: 1.6
 Author: Chris Garrett
 */
 
@@ -182,6 +182,7 @@ function series_management_page() {
                     <th scope="col">Series</th>
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
+                    <th scope="col">Posts</th>
                 </tr>
             </thead>
             <tbody>
@@ -191,6 +192,30 @@ function series_management_page() {
                         <form method="post">
                             <td><input type="text" name="title" value="<?php echo esc_attr(get_option('series_' . $series . '_title')); ?>" /></td>
                             <td><textarea name="description"><?php echo esc_textarea(get_option('series_' . $series . '_description')); ?></textarea></td>
+                            <td>
+                                <?php
+                                $args = array(
+                                    'post_type' => 'post',
+                                    'meta_key' => '_series',
+                                    'meta_value' => $series,
+                                    'orderby' => 'date',
+                                    'order' => 'ASC',
+                                    'posts_per_page' => -1,
+                                );
+                                $posts_query = new WP_Query($args);
+                                if ($posts_query->have_posts()) {
+                                    echo '<ul>';
+                                    while ($posts_query->have_posts()) {
+                                        $posts_query->the_post();
+                                        echo '<li><a href="' . get_edit_post_link() . '">' . get_the_title() . '</a></li>';
+                                    }
+                                    echo '</ul>';
+                                    wp_reset_postdata();
+                                } else {
+                                    echo 'No posts found.';
+                                }
+                                ?>
+                            </td>
                             <td>
                                 <input type="hidden" name="series" value="<?php echo esc_attr($series); ?>" />
                                 <input type="submit" name="save_series" class="button-primary" value="Save" />
