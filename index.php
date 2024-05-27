@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.4
+Version: 1.5
 Author: Chris Garrett
 */
 
@@ -170,8 +170,8 @@ function series_management_page() {
         echo '<div class="updated"><p>Series details saved.</p></div>';
     }
 
-    // Get all unique series values
-    $series_list = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_series' ORDER BY meta_value ASC");
+    // Get all unique series values where the series is not blank
+    $series_list = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_series' AND meta_value != '' ORDER BY meta_value ASC");
 
     ?>
     <div class="wrap">
