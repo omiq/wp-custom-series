@@ -25,23 +25,6 @@ function save_series_meta_box_data($post_id) {
 }
 add_action('save_post', 'save_series_meta_box_data');
 
-// Add "Series" field to Quick Edit
-function add_series_quick_edit($column_name, $post_type) {
-    if ($column_name === 'title' && $post_type === 'post') {
-        echo '<fieldset class="inline-edit-col-right"><div class="inline-edit-col">';
-        echo '<label><span class="title">Series</span><span class="input-text-wrap"><input type="text" name="series_field" class="ptitle" value=""></span></label>';
-        echo '</div></fieldset>';
-    }
-}
-add_action('quick_edit_custom_box', 'add_series_quick_edit', 10, 2);
-
-function save_quick_edit_series($post_id) {
-    if (isset($_POST['series_field'])) {
-        update_post_meta($post_id, '_series', sanitize_text_field($_POST['series_field']));
-    }
-}
-add_action('save_post', 'save_quick_edit_series');
-
 // Add Series column to posts list
 function add_series_column($columns) {
     $columns['series'] = 'Series';
@@ -56,6 +39,23 @@ function fill_series_column($column, $post_id) {
     }
 }
 add_action('manage_post_posts_custom_column', 'fill_series_column', 10, 2);
+
+// Add "Series" field to Quick Edit
+function add_series_quick_edit($column_name, $post_type) {
+    if ($column_name === 'series' && $post_type === 'post') {
+        ?>
+        <fieldset class="inline-edit-col-right inline-edit-series">
+            <div class="inline-edit-col">
+                <label>
+                    <span class="title">Series</span>
+                    <span class="input-text-wrap"><input type="text" name="series_field" class="ptitle" value=""></span>
+                </label>
+            </div>
+        </fieldset>
+        <?php
+    }
+}
+add_action('quick_edit_custom_box', 'add_series_quick_edit', 10, 2);
 
 // Enqueue JavaScript for Quick Edit
 function enqueue_quick_edit_js($hook) {
@@ -89,6 +89,14 @@ function quick_edit_series_js() {
     </script>
     <?php
 }
+
+// Save Quick Edit data
+function save_quick_edit_series($post_id) {
+    if (isset($_POST['series_field'])) {
+        update_post_meta($post_id, '_series', sanitize_text_field($_POST['series_field']));
+    }
+}
+add_action('save_post', 'save_quick_edit_series');
 
 // Create shortcode to display posts in the same series
 function series_shortcode($atts) {
