@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.1
+Version: 1.2
 Author: Chris Garrett
 */
 
@@ -109,6 +109,8 @@ function series_shortcode($atts) {
         return '';
     }
 
+    $current_post_id = get_the_ID();
+
     $args = array(
         'post_type' => 'post',
         'meta_key' => '_series',
@@ -123,7 +125,7 @@ function series_shortcode($atts) {
         $output = '<ul>';
         while ($query->have_posts()) {
             $query->the_post();
-            if (get_the_ID() == $post->ID) {
+            if (get_the_ID() == $current_post_id) {
                 $output .= '<li>' . get_the_title() . '</li>';
             } else {
                 $output .= '<li><a href="' . get_permalink() . '">' . get_the_title() . '</a></li>';
