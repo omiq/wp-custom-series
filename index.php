@@ -105,8 +105,12 @@ function series_shortcode($atts) {
         'name' => '',
     ), $atts, 'series');
 
+    if (!$atts['name'] && is_singular('post')) {
+        $atts['name'] = get_post_meta(get_the_ID(), '_series', true);
+    }
+
     if (!$atts['name']) {
-        return '';
+        return 'No series specified and no series found for the current post.';
     }
 
     $series_name = $atts['name'];
