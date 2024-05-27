@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.0
+Version: 1.1
 Author: Chris Garrett
 */
 
