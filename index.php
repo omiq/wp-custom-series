@@ -26,14 +26,14 @@ function save_series_meta_box_data($post_id) {
 add_action('save_post', 'save_series_meta_box_data');
 
 // Add "Series" field to Quick Edit
-function add_series_to_quick_edit($column_name, $post_type) {
+function add_series_quick_edit($column_name, $post_type) {
     if ($column_name === 'title' && $post_type === 'post') {
         echo '<fieldset class="inline-edit-col-right"><div class="inline-edit-col">';
         echo '<label><span class="title">Series</span><span class="input-text-wrap"><input type="text" name="series_field" class="ptitle" value=""></span></label>';
         echo '</div></fieldset>';
     }
 }
-add_action('quick_edit_custom_box', 'add_series_to_quick_edit', 10, 2);
+add_action('quick_edit_custom_box', 'add_series_quick_edit', 10, 2);
 
 function save_quick_edit_series($post_id) {
     if (isset($_POST['series_field'])) {
@@ -41,6 +41,54 @@ function save_quick_edit_series($post_id) {
     }
 }
 add_action('save_post', 'save_quick_edit_series');
+
+// Add Series column to posts list
+function add_series_column($columns) {
+    $columns['series'] = 'Series';
+    return $columns;
+}
+add_filter('manage_post_posts_columns', 'add_series_column');
+
+function fill_series_column($column, $post_id) {
+    if ($column === 'series') {
+        $series = get_post_meta($post_id, '_series', true);
+        echo esc_html($series);
+    }
+}
+add_action('manage_post_posts_custom_column', 'fill_series_column', 10, 2);
+
+// Enqueue JavaScript for Quick Edit
+function enqueue_quick_edit_js($hook) {
+    if ($hook === 'edit.php') {
+        wp_enqueue_script('quick_edit_series', plugin_dir_url(__FILE__) . 'quick-edit-series.js', array('jquery', 'inline-edit-post'), '', true);
+    }
+}
+add_action('admin_enqueue_scripts', 'enqueue_quick_edit_js');
+
+// JavaScript for Quick Edit
+add_action('admin_footer', 'quick_edit_series_js');
+function quick_edit_series_js() {
+    ?>
+    <script type="text/javascript">
+        jQuery(function($) {
+            var $wp_inline_edit = inlineEditPost.edit;
+            inlineEditPost.edit = function(id) {
+                $wp_inline_edit.apply(this, arguments);
+                var post_id = 0;
+                if (typeof(id) == 'object') {
+                    post_id = parseInt(this.getId(id));
+                }
+                if (post_id > 0) {
+                    var $edit_row = $('#edit-' + post_id);
+                    var $post_row = $('#post-' + post_id);
+                    var series = $post_row.find('.column-series').text();
+                    $edit_row.find('input[name="series_field"]').val(series);
+                }
+            };
+        });
+    </script>
+    <?php
+}
 
 // Create shortcode to display posts in the same series
 function series_shortcode($atts) {
