@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom Series Plugin
 Description: Adds a custom field "Series" to posts and provides a shortcode to list posts in a series.
-Version: 1.6
+Version: 1.7
 Author: Chris Garrett
 */
 
@@ -13,12 +13,37 @@ function add_series_meta_box() {
 add_action('add_meta_boxes', 'add_series_meta_box');
 
 function series_meta_callback($post) {
+    // Add nonce for security
+    wp_nonce_field('series_meta_box', 'series_meta_box_nonce');
+    
     $value = get_post_meta($post->ID, '_series', true);
-    echo '<label for="series_field">Series: </label>';
-    echo '<input type="text" id="series_field" name="series_field" value="' . esc_attr($value) . '" />';
+    ?>
+    <label for="series_field">Series: </label>
+    <input type="text" id="series_field" name="series_field" value="<?php echo esc_attr($value); ?>" />
+    <?php
 }
 
 function save_series_meta_box_data($post_id) {
+    // Check if our nonce is set
+    if (!isset($_POST['series_meta_box_nonce'])) {
+        return;
+    }
+
+    // Verify that the nonce is valid
+    if (!wp_verify_nonce($_POST['series_meta_box_nonce'], 'series_meta_box')) {
+        return;
+    }
+
+    // If this is an autosave, our form has not been submitted, so we don't want to do anything
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Check the user's permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
     if (array_key_exists('series_field', $_POST)) {
         update_post_meta($post_id, '_series', sanitize_text_field($_POST['series_field']));
     }
@@ -162,31 +187,40 @@ add_action('admin_menu', 'series_admin_menu');
 
 // Display Series Management Page
 function series_management_page() {
+    // Check user capabilities
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
     global $wpdb;
     
     // Save series title and description
-    if (isset($_POST['save_series'])) {
+    if (isset($_POST['save_series']) && isset($_POST['series_nonce']) && wp_verify_nonce($_POST['series_nonce'], 'save_series_details')) {
         $series = sanitize_text_field($_POST['series']);
         $title = sanitize_text_field($_POST['title']);
-        $description = sanitize_textarea_field($_POST['description']);
+        $description = wp_kses_post($_POST['description']);
         update_option('series_' . $series . '_title', $title);
         update_option('series_' . $series . '_description', $description);
-        echo '<div class="updated"><p>Series details saved.</p></div>';
+        echo '<div class="updated"><p>' . esc_html__('Series details saved.', 'custom-series') . '</p></div>';
     }
 
     // Get all unique series values where the series is not blank
-    $series_list = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_series' AND meta_value != '' ORDER BY meta_value ASC");
+    $series_list = $wpdb->get_col($wpdb->prepare(
+        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value != %s ORDER BY meta_value ASC",
+        '_series',
+        ''
+    ));
 
     ?>
     <div class="wrap">
-        <h1>Series Management</h1>
+        <h1><?php echo esc_html__('Series Management', 'custom-series'); ?></h1>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th scope="col">Series</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Posts</th>
+                    <th scope="col"><?php echo esc_html__('Series', 'custom-series'); ?></th>
+                    <th scope="col"><?php echo esc_html__('Title', 'custom-series'); ?></th>
+                    <th scope="col"><?php echo esc_html__('Description', 'custom-series'); ?></th>
+                    <th scope="col"><?php echo esc_html__('Posts', 'custom-series'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -194,6 +228,7 @@ function series_management_page() {
                     <tr>
                         <td><?php echo esc_html($series); ?></td>
                         <form method="post">
+                            <?php wp_nonce_field('save_series_details', 'series_nonce'); ?>
                             <td><input type="text" name="title" value="<?php echo esc_attr(get_option('series_' . $series . '_title')); ?>" /></td>
                             <td><textarea name="description"><?php echo esc_textarea(get_option('series_' . $series . '_description')); ?></textarea></td>
                             <td>
@@ -211,18 +246,18 @@ function series_management_page() {
                                     echo '<ul>';
                                     while ($posts_query->have_posts()) {
                                         $posts_query->the_post();
-                                        echo '<li><a href="' . get_edit_post_link() . '">' . get_the_title() . '</a></li>';
+                                        echo '<li><a href="' . esc_url(get_edit_post_link()) . '">' . esc_html(get_the_title()) . '</a></li>';
                                     }
                                     echo '</ul>';
                                     wp_reset_postdata();
                                 } else {
-                                    echo 'No posts found.';
+                                    echo esc_html__('No posts found.', 'custom-series');
                                 }
                                 ?>
                             </td>
                             <td>
                                 <input type="hidden" name="series" value="<?php echo esc_attr($series); ?>" />
-                                <input type="submit" name="save_series" class="button-primary" value="Save" />
+                                <input type="submit" name="save_series" class="button-primary" value="<?php echo esc_attr__('Save', 'custom-series'); ?>" />
                             </td>
                         </form>
                     </tr>
@@ -232,3 +267,46 @@ function series_management_page() {
     </div>
     <?php
 }
+
+// Include the block
+require_once plugin_dir_path(__FILE__) . 'blocks/series-block/block.php';
+
+// Include bulk edit functionality
+require_once plugin_dir_path(__FILE__) . 'includes/bulk-edit.php';
+
+// Add block editor styles
+function custom_series_block_editor_styles() {
+    wp_enqueue_style(
+        'custom-series-block-editor',
+        plugins_url('blocks/series-block/editor.css', __FILE__),
+        array(),
+        filemtime(plugin_dir_path(__FILE__) . 'blocks/series-block/editor.css')
+    );
+}
+add_action('enqueue_block_editor_assets', 'custom_series_block_editor_styles');
+
+// Add frontend styles
+function custom_series_styles() {
+    wp_enqueue_style(
+        'custom-series',
+        plugins_url('css/style.css', __FILE__),
+        array(),
+        filemtime(plugin_dir_path(__FILE__) . 'css/style.css')
+    );
+}
+add_action('wp_enqueue_scripts', 'custom_series_styles');
+add_action('admin_enqueue_scripts', 'custom_series_styles');
+
+// Register block category
+function custom_series_block_category($categories) {
+    return array_merge(
+        $categories,
+        array(
+            array(
+                'slug' => 'custom-series',
+                'title' => __('Custom Series', 'custom-series'),
+            ),
+        )
+    );
+}
+add_filter('block_categories_all', 'custom_series_block_category', 10, 1);
