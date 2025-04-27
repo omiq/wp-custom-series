@@ -45,23 +45,19 @@ function custom_series_bulk_edit_field() {
 add_action('bulk_edit_custom_box', 'custom_series_bulk_edit_field', 10, 2);
 
 // Enqueue JavaScript for bulk edit
-function custom_series_bulk_edit_js() {
-    global $post_type;
-    
-    // Only show on post type 'post'
-    if ($post_type !== 'post') {
-        return;
+function custom_series_bulk_edit_enqueue_scripts() {
+    $screen = get_current_screen();
+    if ($screen && $screen->base === 'edit' && $screen->post_type === 'post') {
+        wp_enqueue_script(
+            'custom-series-bulk-edit',
+            plugins_url('../assets/js/bulk-edit.js', __FILE__),
+            array('jquery', 'wp-data', 'wp-element'),
+            CUSTOM_SERIES_VERSION,
+            true
+        );
     }
-    
-    wp_enqueue_script(
-        'custom-series-bulk-edit',
-        plugins_url('../js/bulk-edit.js', __FILE__),
-        array('jquery'),
-        filemtime(plugin_dir_path(__FILE__) . '../js/bulk-edit.js'),
-        true
-    );
 }
-add_action('admin_enqueue_scripts', 'custom_series_bulk_edit_js');
+add_action('admin_enqueue_scripts', 'custom_series_bulk_edit_enqueue_scripts');
 
 // Handle bulk edit save
 function custom_series_bulk_edit_save($post_id) {

@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "custom-series/series-block",
+    "version": "1.0.0",
+    "title": "Series List",
+    "category": "widgets",
+    "icon": "editor-ol",
+    "description": "Display a list of posts in a series",
+    "textdomain": "custom-series",
+    "editorScript": {
+        "file": "./build/index.js",
+        "type": "module"
+    },
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css",
+    "supports": {
+        "html": false
+    },
+    "attributes": {
+        "seriesName": {
+            "type": "string",
+            "default": ""
+        },
+        "alignment": {
+            "type": "string",
+            "default": "none"
+        },
+        "showTitle": {
+            "type": "boolean",
+            "default": true
+        },
+        "showDescription": {
+            "type": "boolean",
+            "default": true
+        },
+        "padding": {
+            "type": "object",
+            "default": {
+                "top": "20px",
+                "right": "20px",
+                "bottom": "20px",
+                "left": "20px"
+            }
+        },
+        "margin": {
+            "type": "object",
+            "default": {
+                "top": "2em",
+                "right": "0",
+                "bottom": "2em",
+                "left": "0"
+            }
+        },
+        "backgroundColor": {
+            "type": "string",
+            "default": "#f9f9f9"
+        },
+        "textColor": {
+            "type": "string",
+            "default": ""
+        },
+        "titleColor": {
+            "type": "string",
+            "default": ""
+        },
+        "borderWidth": {
+            "type": "number",
+            "default": 0
+        },
+        "borderColor": {
+            "type": "string",
+            "default": "#ddd"
+        },
+        "borderRadius": {
+            "type": "number",
+            "default": 4
+        }
+    }
+} 
