@@ -7,14 +7,14 @@ import apiFetch from '@wordpress/api-fetch';
 
 const SeriesBlockEdit = (props) => {
     const { attributes, setAttributes } = props;
-    const { seriesName, showTitle } = attributes;
+    const { seriesName, showTitle, alignment } = attributes;
     const [series, setSeries] = useState([]);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const blockProps = useBlockProps({
-        className: 'wp-block-custom-series-block'
+        className: `wp-block-custom-series-block${alignment ? ` align${alignment}` : ''}`
     });
 
     useEffect(() => {
@@ -133,9 +133,9 @@ const SeriesBlockEdit = (props) => {
 };
 
 const SeriesBlockSave = ({ attributes }) => {
-    const { seriesName, showTitle } = attributes;
+    const { seriesName, showTitle, alignment } = attributes;
     const blockProps = useBlockProps.save({
-        className: 'wp-block-custom-series-block'
+        className: `wp-block-custom-series-block${alignment ? ` align${alignment}` : ''}`
     });
 
     return (
@@ -175,6 +175,10 @@ registerBlockType('custom-series/series-block', {
         showTitle: {
             type: 'boolean',
             default: true
+        },
+        alignment: {
+            type: 'string',
+            default: ''
         }
     },
     edit: SeriesBlockEdit,
