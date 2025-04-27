@@ -26,12 +26,9 @@ define('CUSTOM_SERIES_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Include necessary files
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/post-meta.php';
-// require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/shortcodes.php'; // File missing
-// require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/widgets.php';    // File missing
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/bulk-edit.php';
-require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/rest-api.php';   // File exists now
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/rest-api.php';
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/frontend.php';
-// require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/blocks.php'; // Commenting out for now, might conflict
 
 // Register the block type from block.json
 function custom_series_register_block() {
@@ -54,43 +51,4 @@ function custom_series_enqueue_block_editor_assets() {
 }
 add_action('enqueue_block_editor_assets', 'custom_series_enqueue_block_editor_assets');
 
-// Add Series column to posts list
-function custom_series_add_column($columns) {
-    $columns['series'] = __('Series', 'custom-series');
-    return $columns;
-}
-add_filter('manage_posts_columns', 'custom_series_add_column');
-
-// Display Series value in the column
-function custom_series_column_content($column, $post_id) {
-    if ($column === 'series') {
-        $series = get_post_meta($post_id, '_series', true);
-        echo esc_html($series);
-    }
-}
-add_action('manage_posts_custom_column', 'custom_series_column_content', 10, 2);
-
-// Make Series column sortable
-function custom_series_sortable_column($columns) {
-    $columns['series'] = 'series';
-    return $columns;
-}
-add_filter('manage_edit-post_sortable_columns', 'custom_series_sortable_column');
-
-// Handle sorting by Series
-function custom_series_orderby($query) {
-    if (!is_admin() || !$query->is_main_query()) {
-        return;
-    }
-
-    $orderby = $query->get('orderby');
-    if ($orderby === 'series') {
-        $query->set('meta_key', '_series');
-        $query->set('orderby', 'meta_value');
-    }
-}
-add_action('pre_get_posts', 'custom_series_orderby');
-
-// Remove the redundant enqueue function
-// function custom_series_enqueue_block_editor_assets() { ... }
-// add_action('enqueue_block_editor_assets', 'custom_series_enqueue_block_editor_assets'); 
+// Note: Column functions have been moved to includes/bulk-edit.php 

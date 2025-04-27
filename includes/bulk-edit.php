@@ -42,7 +42,10 @@ function custom_series_bulk_edit_field() {
     </fieldset>
     <?php
 }
+// Add to bulk edit
 add_action('bulk_edit_custom_box', 'custom_series_bulk_edit_field', 10, 2);
+// Add to quick edit
+add_action('quick_edit_custom_box', 'custom_series_bulk_edit_field', 10, 2);
 
 // Enqueue JavaScript for bulk edit
 function custom_series_bulk_edit_enqueue_scripts() {
@@ -51,7 +54,7 @@ function custom_series_bulk_edit_enqueue_scripts() {
         wp_enqueue_script(
             'custom-series-bulk-edit',
             plugins_url('../assets/js/bulk-edit.js', __FILE__),
-            array('jquery', 'wp-data', 'wp-element'),
+            array('jquery'),
             CUSTOM_SERIES_VERSION,
             true
         );
@@ -98,4 +101,92 @@ function custom_series_bulk_edit_save($post_id) {
         }
     }
 }
-add_action('save_post', 'custom_series_bulk_edit_save'); 
+add_action('save_post', 'custom_series_bulk_edit_save');
+
+// Add Series column to posts list
+function custom_series_add_column($columns) {
+    $columns['series'] = __('Series', 'custom-series');
+    return $columns;
+}
+add_filter('manage_posts_columns', 'custom_series_add_column');
+
+// Display Series value in the column
+function custom_series_column_content($column, $post_id) {
+    if ($column === 'series') {
+        $series = get_post_meta($post_id, '_series', true);
+        echo esc_html($series);
+    }
+}
+add_action('manage_posts_custom_column', 'custom_series_column_content', 10, 2);
+
+// Make Series column sortable
+function custom_series_sortable_column($columns) {
+    $columns['series'] = 'series';
+    return $columns;
+}
+add_filter('manage_edit-post_sortable_columns', 'custom_series_sortable_column');
+
+// Handle sorting by Series
+function custom_series_orderby($query) {
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
+    }
+
+    $orderby = $query->get('orderby');
+    if ($orderby === 'series') {
+        $query->set('meta_key', '_series');
+        $query->set('orderby', 'meta_value');
+    }
+}
+add_action('pre_get_posts', 'custom_series_orderby');
+
+// AJAX handler for bulk edit
+function custom_series_bulk_edit_ajax() {
+    // Check nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'custom_series_bulk_edit')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    // Check user permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Insufficient permissions');
+    }
+
+    // Get post IDs
+    $post_ids = isset($_POST['post_ids']) ? $_POST['post_ids'] : array();
+    if (empty($post_ids)) {
+        wp_send_json_error('No posts selected');
+    }
+
+    // Get series value
+    $series_value = isset($_POST['series_value']) ? sanitize_text_field($_POST['series_value']) : '';
+    $new_series_name = isset($_POST['new_series_name']) ? sanitize_text_field($_POST['new_series_name']) : '';
+
+    // Process each post
+    $updated = 0;
+    foreach ($post_ids as $post_id) {
+        $post_id = intval($post_id);
+        
+        // Skip if user can't edit this post
+        if (!current_user_can('edit_post', $post_id)) {
+            continue;
+        }
+
+        // Handle new series
+        if ($series_value === '__new__' && !empty($new_series_name)) {
+            update_post_meta($post_id, '_series', $new_series_name);
+            $updated++;
+        } 
+        // Handle existing series
+        elseif (!empty($series_value)) {
+            update_post_meta($post_id, '_series', $series_value);
+            $updated++;
+        }
+    }
+
+    wp_send_json_success(array(
+        'message' => sprintf(__('Updated %d posts.', 'custom-series'), $updated),
+        'updated' => $updated
+    ));
+}
+add_action('wp_ajax_custom_series_bulk_edit', 'custom_series_bulk_edit_ajax'); 

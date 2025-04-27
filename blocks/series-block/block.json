@@ -33,22 +33,12 @@
             "default": true
         },
         "padding": {
-            "type": "object",
-            "default": {
-                "top": "20px",
-                "right": "20px",
-                "bottom": "20px",
-                "left": "20px"
-            }
+            "type": "number",
+            "default": 24
         },
         "margin": {
-            "type": "object",
-            "default": {
-                "top": "2em",
-                "right": "0",
-                "bottom": "2em",
-                "left": "0"
-            }
+            "type": "number",
+            "default": 32
         },
         "titleColor": {
             "type": "string",
