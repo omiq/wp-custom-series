@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 3,
+    "apiVersion": 2,
     "name": "custom-series/series-block",
     "version": "1.0.0",
     "title": "Series Block",
@@ -18,48 +18,23 @@
         },
         "alignment": {
             "type": "string",
-            "default": "none"
-        },
-        "textColor": {
-            "type": "string",
             "default": ""
-        },
-        "backgroundColor": {
-            "type": "string",
-            "default": ""
-        },
-        "showDescription": {
-            "type": "boolean",
-            "default": true
-        },
-        "padding": {
-            "type": "number",
-            "default": 24
-        },
-        "margin": {
-            "type": "number",
-            "default": 32
-        },
-        "titleColor": {
-            "type": "string",
-            "default": ""
-        },
-        "borderWidth": {
-            "type": "number",
-            "default": 0
-        },
-        "borderColor": {
-            "type": "string",
-            "default": "#ddd"
-        },
-        "borderRadius": {
-            "type": "number",
-            "default": 4
         }
     },
     "supports": {
-        "align": true,
         "html": false,
+        "align": true,
+        "color": {
+            "text": true,
+            "background": true,
+            "gradients": true
+        },
+        "border": {
+            "color": true,
+            "radius": true,
+            "style": true,
+            "width": true
+        },
         "spacing": {
             "margin": true,
             "padding": true
@@ -67,15 +42,13 @@
         "typography": {
             "fontSize": true,
             "lineHeight": true
-        },
-        "color": {
-            "text": true,
-            "background": true,
-            "link": true
         }
     },
     "textdomain": "custom-series",
-    "editorScript": "file:./index.js",
+    "editorScript": {
+        "file": "./index.js",
+        "type": "module"
+    },
     "editorStyle": "file:./index.css",
     "style": "file:./style-index.css"
 } 

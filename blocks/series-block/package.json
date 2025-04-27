@@ -2,20 +2,10 @@
   "name": "custom-series-block",
   "version": "1.0.0",
   "description": "Custom Series Block for WordPress",
-  "main": "index.js",
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
-    "check-engines": "wp-scripts check-engines",
-    "check-licenses": "wp-scripts check-licenses",
-    "format": "wp-scripts format",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "lint:md:docs": "wp-scripts lint-md-docs",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
-    "packages-update": "wp-scripts packages-update",
-    "test:e2e": "wp-scripts test-e2e",
-    "test:unit": "wp-scripts test-unit-js"
+    "packages-update": "wp-scripts packages-update"
   },
   "author": "",
   "license": "GPL-2.0-or-later",
@@ -25,9 +15,9 @@
   "dependencies": {
     "@wordpress/blocks": "^12.24.0",
     "@wordpress/components": "^25.13.0",
-    "@wordpress/compose": "^6.24.0",
-    "@wordpress/data": "^9.17.0",
     "@wordpress/element": "^5.24.0",
-    "@wordpress/i18n": "^4.47.0"
+    "@wordpress/i18n": "^4.47.0",
+    "@wordpress/block-editor": "^12.15.0",
+    "@wordpress/api-fetch": "^6.42.0"
   }
 } 
