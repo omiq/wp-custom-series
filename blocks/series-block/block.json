@@ -3,32 +3,30 @@
     "apiVersion": 3,
     "name": "custom-series/series-block",
     "version": "1.0.0",
-    "title": "Series List",
+    "title": "Series Block",
     "category": "widgets",
-    "icon": "editor-ol",
-    "description": "Display a list of posts in a series",
-    "textdomain": "custom-series",
-    "editorScript": {
-        "file": "./build/index.js",
-        "type": "module"
-    },
-    "editorStyle": "file:./editor.css",
-    "style": "file:./style.css",
-    "supports": {
-        "html": false
-    },
+    "icon": "list-view",
+    "description": "Display posts from a selected series.",
     "attributes": {
         "seriesName": {
             "type": "string",
             "default": ""
         },
+        "showTitle": {
+            "type": "boolean",
+            "default": true
+        },
         "alignment": {
             "type": "string",
             "default": "none"
         },
-        "showTitle": {
-            "type": "boolean",
-            "default": true
+        "textColor": {
+            "type": "string",
+            "default": ""
+        },
+        "backgroundColor": {
+            "type": "string",
+            "default": ""
         },
         "showDescription": {
             "type": "boolean",
@@ -52,14 +50,6 @@
                 "left": "0"
             }
         },
-        "backgroundColor": {
-            "type": "string",
-            "default": "#f9f9f9"
-        },
-        "textColor": {
-            "type": "string",
-            "default": ""
-        },
         "titleColor": {
             "type": "string",
             "default": ""
@@ -76,5 +66,26 @@
             "type": "number",
             "default": 4
         }
-    }
+    },
+    "supports": {
+        "align": true,
+        "html": false,
+        "spacing": {
+            "margin": true,
+            "padding": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "color": {
+            "text": true,
+            "background": true,
+            "link": true
+        }
+    },
+    "textdomain": "custom-series",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css"
 } 

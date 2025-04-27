@@ -30,6 +30,7 @@ require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/post-meta.php';
 // require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/widgets.php';    // File missing
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/bulk-edit.php';
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/rest-api.php';   // File exists now
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/frontend.php';
 // require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/blocks.php'; // Commenting out for now, might conflict
 
 // Register the block type from block.json

@@ -1,0 +1,29 @@
+.wp-block-custom-series-block {
+    padding: 1.5em;
+    margin: 1em 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wp-block-custom-series-block .series-title {
+    margin: 0 0 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid currentColor;
+    font-size: 1.5em;
+}
+
+.wp-block-custom-series-block .series-posts {
+    margin: 0;
+}
+
+.wp-block-custom-series-block.aligncenter {
+    text-align: center;
+}
+
+.wp-block-custom-series-block.alignright {
+    text-align: right;
+}
+
+.wp-block-custom-series-block.alignleft {
+    text-align: left;
+} 

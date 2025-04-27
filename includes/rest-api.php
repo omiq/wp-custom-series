@@ -15,10 +15,11 @@ function custom_series_register_meta() {
     register_post_meta('post', '_series', array(
         'type' => 'string',
         'single' => true,
-        'show_in_rest' => true,
-        'schema' => array(
-            'type' => 'string',
-            'description' => 'The series name for this post'
+        'show_in_rest' => array(
+            'schema' => array(
+                'type' => 'string',
+                'description' => 'The series name for this post'
+            )
         ),
         'auth_callback' => function() {
             return current_user_can('edit_posts');
