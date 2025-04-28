@@ -98,56 +98,64 @@ const SeriesBlockEdit = (props) => {
                             }))
                         ]}
                         onChange={(value) => setAttributes({ seriesName: value })}
-                        __next40pxDefaultSize={true}
-                        __nextHasNoMarginBottom={true}
                     />
                     <ToggleControl
                         label={__('Show Series Title', 'custom-series')}
                         checked={showTitle}
                         onChange={(value) => setAttributes({ showTitle: value })}
-                        __nextHasNoMarginBottom={true}
                     />
                 </PanelBody>
                 <PanelColorGradientSettings
-                    title={__('Color settings')}
-                    initialOpen={true}
+                    title={__('Color Settings', 'custom-series')}
+                    settings={[
+                        {
+                            colorValue: attributes.backgroundColor,
+                            onColorChange: (value) => setAttributes({ backgroundColor: value }),
+                            label: __('Background Color', 'custom-series'),
+                        },
+                        {
+                            colorValue: attributes.textColor,
+                            onColorChange: (value) => setAttributes({ textColor: value }),
+                            label: __('Text Color', 'custom-series'),
+                        },
+                    ]}
                 />
             </InspectorControls>
             <div {...blockProps}>
                 {loading ? (
                     <div className="series-placeholder">
-                        <p>{__('Loading series...', 'custom-series')}</p>
+                        {__('Loading series...', 'custom-series')}
                     </div>
                 ) : error ? (
-                    <div className="series-placeholder series-error">
-                        <p className="error">{error}</p>
+                    <div className="series-error">
+                        <div className="error">{error}</div>
                     </div>
                 ) : !seriesName ? (
                     <div className="series-placeholder">
-                        <p>{__('Select a series from the block settings.', 'custom-series')}</p>
+                        {__('Select a series to display', 'custom-series')}
+                    </div>
+                ) : postsLoading ? (
+                    <div className="series-placeholder">
+                        {__('Loading posts...', 'custom-series')}
+                    </div>
+                ) : posts.length === 0 ? (
+                    <div className="series-placeholder">
+                        {__('No posts found in this series', 'custom-series')}
                     </div>
                 ) : (
                     <>
                         {showTitle && seriesName && (
                             <h2 className="series-title">{seriesName}</h2>
                         )}
-                        {postsLoading ? (
-                            <div className="series-placeholder">
-                                <p>{__('Loading posts...', 'custom-series')}</p>
-                            </div>
-                        ) : posts.length > 0 ? (
-                            <ul className="series-posts">
-                                {posts.map(post => (
+                        <div className="series-posts">
+                            <ul>
+                                {posts.map((post) => (
                                     <li key={post.id}>
-                                        <a href={post.link}>{post.title.rendered}</a>
+                                        <a href={post.link}>{post.title}</a>
                                     </li>
                                 ))}
                             </ul>
-                        ) : seriesName && (
-                            <div className="series-placeholder">
-                                <p>{__('No posts found in this series.', 'custom-series')}</p>
-                            </div>
-                        )}
+                        </div>
                     </>
                 )}
             </div>
@@ -155,6 +163,7 @@ const SeriesBlockEdit = (props) => {
     );
 };
 
+// Server-side rendering for the frontend
 const SeriesBlockSave = ({ attributes }) => {
     const { seriesName, showTitle, alignment } = attributes;
     
@@ -168,7 +177,7 @@ const SeriesBlockSave = ({ attributes }) => {
                 <h2 className="series-title">{seriesName}</h2>
             )}
             <div className="series-posts">
-                {/* Posts will be loaded dynamically via PHP */}
+                {/* This will be replaced with server-side rendered content */}
                 <div className="series-posts-container" data-series={seriesName}></div>
             </div>
         </div>
@@ -192,6 +201,14 @@ registerBlockType('custom-series/series-block', {
             default: true
         },
         alignment: {
+            type: 'string',
+            default: ''
+        },
+        backgroundColor: {
+            type: 'string',
+            default: ''
+        },
+        textColor: {
             type: 'string',
             default: ''
         }
