@@ -29,6 +29,10 @@ require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/post-meta.php';
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/bulk-edit.php';
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/rest-api.php';
 require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/frontend.php';
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/class-custom-series.php';
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/class-custom-series-meta.php';
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'includes/class-custom-series-block.php';
+require_once CUSTOM_SERIES_PLUGIN_DIR . 'blocks/series-block/render.php';
 
 // Register the block type from block.json
 function custom_series_register_block() {
@@ -52,3 +56,38 @@ function custom_series_enqueue_block_editor_assets() {
 add_action('enqueue_block_editor_assets', 'custom_series_enqueue_block_editor_assets');
 
 // Note: Column functions have been moved to includes/bulk-edit.php 
+
+// Initialize the plugin
+function custom_series_init() {
+    // Initialize the main plugin class
+    $custom_series = new Custom_Series();
+    $custom_series->init();
+    
+    // Initialize the meta class
+    $custom_series_meta = new Custom_Series_Meta();
+    $custom_series_meta->init();
+    
+    // Initialize the block class
+    $custom_series_block = new Custom_Series_Block();
+    $custom_series_block->init();
+    
+    // Register the block render callback
+    register_block_type('custom-series/series-block', array(
+        'render_callback' => 'custom_series_render_block'
+    ));
+}
+add_action('plugins_loaded', 'custom_series_init');
+
+// Activation hook
+register_activation_hook(__FILE__, 'custom_series_activate');
+function custom_series_activate() {
+    // Activation code here
+    flush_rewrite_rules();
+}
+
+// Deactivation hook
+register_deactivation_hook(__FILE__, 'custom_series_deactivate');
+function custom_series_deactivate() {
+    // Deactivation code here
+    flush_rewrite_rules();
+} 

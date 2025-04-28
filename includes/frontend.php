@@ -11,61 +11,40 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueue frontend scripts and styles
+ * Enqueue frontend assets
  */
 function custom_series_enqueue_frontend_assets() {
-    // Only enqueue on pages that have the series block
-    if (has_block('custom-series/series-block')) {
-        wp_enqueue_style(
-            'custom-series-frontend',
-            plugin_dir_url(__FILE__) . '../assets/css/frontend.css',
-            array(),
-            CUSTOM_SERIES_VERSION
-        );
-
-        wp_enqueue_script(
-            'custom-series-frontend',
-            plugin_dir_url(__FILE__) . '../assets/js/frontend.js',
-            array('jquery'),
-            CUSTOM_SERIES_VERSION,
-            true
-        );
-
-        // Get current post ID if we're on a single post
-        $current_post_id = is_singular() ? get_the_ID() : 0;
-
-        wp_localize_script(
-            'custom-series-frontend',
-            'customSeriesData',
-            array(
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('custom_series_nonce'),
-                'currentPostId' => $current_post_id
-            )
-        );
+    // Only enqueue on singular post pages
+    if (!is_singular('post')) {
+        return;
     }
+
+    // Enqueue frontend styles
+    wp_enqueue_style(
+        'custom-series-frontend',
+        CUSTOM_SERIES_PLUGIN_URL . 'assets/css/frontend.css',
+        array(),
+        CUSTOM_SERIES_VERSION
+    );
 }
 add_action('wp_enqueue_scripts', 'custom_series_enqueue_frontend_assets');
 
 /**
- * AJAX handler to fetch posts in a series
+ * Add schema markup for series
  */
-function custom_series_get_posts_in_series() {
-    // Check nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'custom_series_nonce')) {
-        wp_send_json_error('Invalid nonce');
+function custom_series_add_schema_markup() {
+    // Only add schema on singular post pages
+    if (!is_singular('post')) {
+        return;
     }
 
-    // Get series name
-    $series_name = isset($_POST['series']) ? sanitize_text_field($_POST['series']) : '';
+    // Get the series name
+    $series_name = get_post_meta(get_the_ID(), '_series', true);
     if (empty($series_name)) {
-        wp_send_json_error('Series name is required');
+        return;
     }
 
-    // Debug log
-    error_log('Custom Series: Fetching posts for series: ' . $series_name);
-
-    // Query posts in the series
+    // Get all posts in the series
     $args = array(
         'post_type' => 'post',
         'posts_per_page' => 100,
@@ -79,25 +58,47 @@ function custom_series_get_posts_in_series() {
     );
 
     $query = new WP_Query($args);
-    $posts = array();
-
-    // Debug log
-    error_log('Custom Series: Found ' . $query->found_posts . ' posts in series');
+    $series_posts = array();
 
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
-            $posts[] = array(
+            $series_posts[] = array(
                 'id' => get_the_ID(),
                 'title' => get_the_title(),
-                'link' => get_permalink(),
-                'date' => get_the_date()
+                'url' => get_permalink()
             );
         }
     }
 
     wp_reset_postdata();
-    wp_send_json_success($posts);
+
+    // Create schema markup
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'Article',
+        'isPartOf' => array(
+            '@type' => 'Series',
+            'name' => $series_name,
+            'numberOfItems' => count($series_posts),
+            'itemListElement' => array()
+        )
+    );
+
+    // Add each post to the series
+    foreach ($series_posts as $index => $post) {
+        $schema['isPartOf']['itemListElement'][] = array(
+            '@type' => 'ListItem',
+            'position' => $index + 1,
+            'item' => array(
+                '@type' => 'Article',
+                'url' => $post['url'],
+                'name' => $post['title']
+            )
+        );
+    }
+
+    // Output schema markup
+    echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>';
 }
-add_action('wp_ajax_custom_series_get_posts', 'custom_series_get_posts_in_series');
-add_action('wp_ajax_nopriv_custom_series_get_posts', 'custom_series_get_posts_in_series'); 
+add_action('wp_head', 'custom_series_add_schema_markup'); 
