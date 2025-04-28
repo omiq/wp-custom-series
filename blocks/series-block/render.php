@@ -32,7 +32,7 @@ function custom_series_render_block($attributes, $content, $block) {
     
     // Check if we have a series name
     if (empty($series_name)) {
-        echo '<div class="wp-block-custom-series-series-block series-placeholder">';
+        echo '<div class="wp-block-custom-series-block series-placeholder">';
         echo esc_html__('Select a series to display', 'custom-series');
         echo '</div>';
         return ob_get_clean();
@@ -47,6 +47,8 @@ function custom_series_render_block($attributes, $content, $block) {
         $args = array(
             'post_type' => 'post',
             'posts_per_page' => 100,
+            'orderby' => 'date',
+            'order' => 'ASC',
             'meta_query' => array(
                 array(
                     'key' => '_series',
@@ -78,7 +80,7 @@ function custom_series_render_block($attributes, $content, $block) {
     }
     
     // Start the block output
-    $classes = 'wp-block-custom-series-series-block';
+    $classes = 'wp-block-custom-series-block';
     if (!empty($alignment)) {
         $classes .= ' align' . esc_attr($alignment);
     }
@@ -97,14 +99,18 @@ function custom_series_render_block($attributes, $content, $block) {
         echo '</div>';
     } else {
         echo '<div class="series-posts">';
-        echo '<ul class="series-posts">';
+        echo '<ul class="series-posts-list">';
         
         foreach ($posts as $post) {
-            $is_current_post = ($current_post_id == $post['id']);
+            $is_current_post = (int)$current_post_id === (int)$post['id'];
             $current_class = $is_current_post ? ' current-post-in-series' : '';
             
-            echo '<li class="series-post-item' . $current_class . '">';
-            echo '<a href="' . esc_url($post['link']) . '">' . esc_html($post['title']) . '</a>';
+            echo '<li class="series-post-item' . esc_attr($current_class) . '">';
+            if ($is_current_post) {
+                echo '<span class="current-post">' . esc_html($post['title']) . '</span>';
+            } else {
+                echo '<a href="' . esc_url($post['link']) . '">' . esc_html($post['title']) . '</a>';
+            }
             echo '</li>';
         }
         
