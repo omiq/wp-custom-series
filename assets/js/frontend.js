@@ -22,8 +22,15 @@
                     const posts = response.data;
                     let html = '<ul class="series-posts">';
                     
+                    // Get current post ID from the page
+                    const currentPostId = customSeriesData.currentPostId;
+                    
                     posts.forEach(function(post) {
-                        html += `<li><a href="${post.link}">${post.title}</a></li>`;
+                        // Add current-post-in-series class if this is the current post
+                        const isCurrentPost = currentPostId && post.id == currentPostId;
+                        const currentClass = isCurrentPost ? ' current-post-in-series' : '';
+                        
+                        html += `<li class="series-post-item${currentClass}"><a href="${post.link}">${post.title}</a></li>`;
                     });
                     
                     html += '</ul>';

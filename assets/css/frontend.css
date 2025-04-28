@@ -56,10 +56,24 @@
 
 .wp-block-custom-series-block .series-posts li {
     margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
 
 .wp-block-custom-series-block .series-posts li:last-child {
     margin-bottom: 0;
+}
+
+/* Current post in series styling */
+.wp-block-custom-series-block .series-posts li.current-post-in-series {
+    background-color: #f0f7ff;
+    border-left: 4px solid #0073aa;
+    font-weight: 600;
+}
+
+.wp-block-custom-series-block .series-posts li.current-post-in-series a {
+    color: #0073aa;
 }
 
 .wp-block-custom-series-block .series-posts a {

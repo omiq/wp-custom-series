@@ -31,12 +31,16 @@ function custom_series_enqueue_frontend_assets() {
             true
         );
 
+        // Get current post ID if we're on a single post
+        $current_post_id = is_singular() ? get_the_ID() : 0;
+
         wp_localize_script(
             'custom-series-frontend',
             'customSeriesData',
             array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('custom_series_nonce')
+                'nonce' => wp_create_nonce('custom_series_nonce'),
+                'currentPostId' => $current_post_id
             )
         );
     }
