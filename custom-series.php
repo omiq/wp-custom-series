@@ -35,7 +35,9 @@ require_once CUSTOM_SERIES_PLUGIN_DIR . 'blocks/series-block/render.php';
 function custom_series_register_block() {
     $block_json_path = CUSTOM_SERIES_PLUGIN_DIR . 'blocks/series-block/block.json';
     if (file_exists($block_json_path)) {
-        register_block_type_from_metadata($block_json_path);
+        register_block_type_from_metadata($block_json_path, array(
+            'render_callback' => 'custom_series_render_block'
+        ));
     }
 }
 add_action('init', 'custom_series_register_block');
@@ -53,14 +55,6 @@ function custom_series_enqueue_block_editor_assets() {
 add_action('enqueue_block_editor_assets', 'custom_series_enqueue_block_editor_assets');
 
 // Note: Column functions have been moved to includes/bulk-edit.php 
-
-// Register the block render callback
-function custom_series_register_block_render_callback() {
-    register_block_type('custom-series/series-block', array(
-        'render_callback' => 'custom_series_render_block'
-    ));
-}
-add_action('init', 'custom_series_register_block_render_callback');
 
 // Activation hook
 register_activation_hook(__FILE__, 'custom_series_activate');
