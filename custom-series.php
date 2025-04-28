@@ -3,7 +3,7 @@
  * Plugin Name:       Custom Series
  * Plugin URI:        https://example.com/plugins/the-basics/
  * Description:       Manage and display posts as part of a series.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Your Name
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define constants
-define('CUSTOM_SERIES_VERSION', '1.1.0');
+define('CUSTOM_SERIES_VERSION', '1.1.1');
 define('CUSTOM_SERIES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('CUSTOM_SERIES_PLUGIN_URL', plugin_dir_url(__FILE__));
 
