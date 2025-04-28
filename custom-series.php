@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name:       Custom Series
- * Plugin URI:        https://example.com/plugins/the-basics/
- * Description:       Manage and display posts as part of a series.
+ * Plugin URI:        https://hivewp.com/custom-series/
+ * Description:       Manage, interlink, and display posts as part of a series.
  * Version:           1.1.1
  * Requires at least: 5.8
  * Requires PHP:      7.4
- * Author:            Your Name
- * Author URI:        https://author.example.com/
+ * Author:            Chris Garrett
+ * Author URI:        https://hivewp.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       custom-series
