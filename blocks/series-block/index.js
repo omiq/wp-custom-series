@@ -115,9 +115,13 @@ const SeriesBlockEdit = (props) => {
             </InspectorControls>
             <div {...blockProps}>
                 {loading ? (
-                    <p>{__('Loading series...', 'custom-series')}</p>
+                    <div className="series-placeholder">
+                        <p>{__('Loading series...', 'custom-series')}</p>
+                    </div>
                 ) : error ? (
-                    <p className="error">{error}</p>
+                    <div className="series-placeholder series-error">
+                        <p className="error">{error}</p>
+                    </div>
                 ) : !seriesName ? (
                     <div className="series-placeholder">
                         <p>{__('Select a series from the block settings.', 'custom-series')}</p>
@@ -128,7 +132,9 @@ const SeriesBlockEdit = (props) => {
                             <h2 className="series-title">{seriesName}</h2>
                         )}
                         {postsLoading ? (
-                            <p>{__('Loading posts...', 'custom-series')}</p>
+                            <div className="series-placeholder">
+                                <p>{__('Loading posts...', 'custom-series')}</p>
+                            </div>
                         ) : posts.length > 0 ? (
                             <ul className="series-posts">
                                 {posts.map(post => (
@@ -138,7 +144,9 @@ const SeriesBlockEdit = (props) => {
                                 ))}
                             </ul>
                         ) : seriesName && (
-                            <p>{__('No posts found in this series.', 'custom-series')}</p>
+                            <div className="series-placeholder">
+                                <p>{__('No posts found in this series.', 'custom-series')}</p>
+                            </div>
                         )}
                     </>
                 )}

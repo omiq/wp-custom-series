@@ -4,6 +4,9 @@
     margin: 0;
     position: relative;
     min-height: 100px;
+    background-color: #f8f9fa; /* Light background by default */
+    border: 1px solid #e2e4e7; /* Light border by default */
+    border-radius: 4px;
 }
 
 /* Placeholder styles */
@@ -13,6 +16,16 @@
     border: 1px dashed #ccc;
     border-radius: 4px;
     text-align: center;
+    margin-bottom: 15px;
+}
+
+.wp-block-custom-series-series-block .series-error {
+    background-color: #fef0f0;
+    border-color: #fccfcf;
+}
+
+.wp-block-custom-series-series-block .series-error .error {
+    color: #d63638;
 }
 
 /* Ensure alignment styles work */
@@ -33,6 +46,8 @@
 .wp-block-custom-series-series-block .series-title {
     margin-top: 0;
     margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #e2e4e7;
 }
 
 .wp-block-custom-series-series-block .series-posts {
@@ -43,10 +58,17 @@
 
 .wp-block-custom-series-series-block .series-posts li {
     margin-bottom: 0.5em;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.wp-block-custom-series-series-block .series-posts li:last-child {
+    border-bottom: none;
 }
 
 .wp-block-custom-series-series-block .series-posts a {
     text-decoration: none;
+    color: #0073aa;
 }
 
 .wp-block-custom-series-series-block .series-posts a:hover {
