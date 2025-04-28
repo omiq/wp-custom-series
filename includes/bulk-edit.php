@@ -20,8 +20,11 @@ function custom_series_bulk_edit_field() {
         ''
     ));
     
+    // Generate a unique ID for the nonce field
+    $nonce_id = 'custom_series_bulk_edit_nonce_' . uniqid();
+    
     // Add nonce for security
-    wp_nonce_field('custom_series_bulk_edit', 'custom_series_bulk_edit_nonce');
+    wp_nonce_field('custom_series_bulk_edit', 'custom_series_bulk_edit_nonce', false, true);
     ?>
     <fieldset class="inline-edit-col-right inline-edit-series">
         <div class="inline-edit-col">
@@ -110,11 +113,13 @@ function custom_series_add_column($columns) {
 }
 add_filter('manage_posts_columns', 'custom_series_add_column');
 
-// Display Series value in the column
+// Display Series in the column
 function custom_series_column_content($column, $post_id) {
     if ($column === 'series') {
         $series = get_post_meta($post_id, '_series', true);
-        echo esc_html($series);
+        if (!empty($series)) {
+            echo esc_html($series);
+        }
     }
 }
 add_action('manage_posts_custom_column', 'custom_series_column_content', 10, 2);
@@ -131,8 +136,9 @@ function custom_series_orderby($query) {
     if (!is_admin() || !$query->is_main_query()) {
         return;
     }
-
+    
     $orderby = $query->get('orderby');
+    
     if ($orderby === 'series') {
         $query->set('meta_key', '_series');
         $query->set('orderby', 'meta_value');
@@ -142,14 +148,19 @@ add_action('pre_get_posts', 'custom_series_orderby');
 
 // AJAX handler for bulk edit
 function custom_series_bulk_edit_ajax() {
-    // Check nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'custom_series_bulk_edit')) {
+    // Check if our nonce is set
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error('Nonce not set');
+    }
+
+    // Verify that the nonce is valid
+    if (!wp_verify_nonce($_POST['nonce'], 'custom_series_bulk_edit')) {
         wp_send_json_error('Invalid nonce');
     }
 
-    // Check user permissions
+    // Check the user's permissions
     if (!current_user_can('edit_posts')) {
-        wp_send_json_error('Insufficient permissions');
+        wp_send_json_error('Permission denied');
     }
 
     // Get post IDs
@@ -160,33 +171,21 @@ function custom_series_bulk_edit_ajax() {
 
     // Get series value
     $series_value = isset($_POST['series_value']) ? sanitize_text_field($_POST['series_value']) : '';
-    $new_series_name = isset($_POST['new_series_name']) ? sanitize_text_field($_POST['new_series_name']) : '';
-
-    // Process each post
+    
+    // Update posts
     $updated = 0;
     foreach ($post_ids as $post_id) {
-        $post_id = intval($post_id);
-        
-        // Skip if user can't edit this post
-        if (!current_user_can('edit_post', $post_id)) {
-            continue;
-        }
-
-        // Handle new series
-        if ($series_value === '__new__' && !empty($new_series_name)) {
-            update_post_meta($post_id, '_series', $new_series_name);
-            $updated++;
-        } 
-        // Handle existing series
-        elseif (!empty($series_value)) {
-            update_post_meta($post_id, '_series', $series_value);
-            $updated++;
+        if (current_user_can('edit_post', $post_id)) {
+            if (!empty($series_value)) {
+                update_post_meta($post_id, '_series', $series_value);
+                $updated++;
+            }
         }
     }
 
     wp_send_json_success(array(
-        'message' => sprintf(__('Updated %d posts.', 'custom-series'), $updated),
-        'updated' => $updated
+        'updated' => $updated,
+        'message' => sprintf(__('%d posts updated', 'custom-series'), $updated)
     ));
 }
 add_action('wp_ajax_custom_series_bulk_edit', 'custom_series_bulk_edit_ajax'); 
