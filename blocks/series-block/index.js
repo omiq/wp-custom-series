@@ -3,13 +3,13 @@ import { __ } from '@wordpress/i18n';
 import { 
     InspectorControls, 
     useBlockProps,
-    PanelColorSettings
+    PanelColorSettings,
+    __experimentalPanelColorGradientSettings as PanelColorGradientSettings
 } from '@wordpress/block-editor';
 import { 
     PanelBody, 
     SelectControl, 
-    ToggleControl,
-    RangeControl
+    ToggleControl
 } from '@wordpress/components';
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
@@ -24,7 +24,7 @@ const SeriesBlockEdit = (props) => {
     const [postsLoading, setPostsLoading] = useState(false);
 
     const blockProps = useBlockProps({
-        className: `wp-block-custom-series-block${alignment ? ` align${alignment}` : ''}`
+        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`
     });
 
     const fetchSeries = useCallback(async () => {
@@ -108,12 +108,20 @@ const SeriesBlockEdit = (props) => {
                         __nextHasNoMarginBottom={true}
                     />
                 </PanelBody>
+                <PanelColorGradientSettings
+                    title={__('Color settings')}
+                    initialOpen={true}
+                />
             </InspectorControls>
             <div {...blockProps}>
                 {loading ? (
                     <p>{__('Loading series...', 'custom-series')}</p>
                 ) : error ? (
                     <p className="error">{error}</p>
+                ) : !seriesName ? (
+                    <div className="series-placeholder">
+                        <p>{__('Select a series from the block settings.', 'custom-series')}</p>
+                    </div>
                 ) : (
                     <>
                         {showTitle && seriesName && (
@@ -140,23 +148,10 @@ const SeriesBlockEdit = (props) => {
 };
 
 const SeriesBlockSave = ({ attributes }) => {
-    const { 
-        seriesName, 
-        showTitle, 
-        alignment
-    } = attributes;
-    
-    // Create a style object that matches the expected format exactly
-    const styleObject = {
-        borderColor: '',
-        borderWidth: '',
-        borderStyle: '',
-        borderRadius: ''
-    };
+    const { seriesName, showTitle, alignment } = attributes;
     
     const blockProps = useBlockProps.save({
-        className: `wp-block-custom-series-series-block wp-block-custom-series-block${alignment ? ` align${alignment}` : ''}`,
-        style: styleObject
+        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`
     });
 
     return (

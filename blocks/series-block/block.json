@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 2,
+    "apiVersion": 3,
     "name": "custom-series/series-block",
     "version": "1.0.0",
     "title": "Series Block",
@@ -28,12 +28,6 @@
             "text": true,
             "background": true,
             "gradients": true
-        },
-        "border": {
-            "color": true,
-            "radius": true,
-            "style": true,
-            "width": true
         },
         "spacing": {
             "margin": true,

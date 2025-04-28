@@ -1,0 +1,54 @@
+.wp-block-custom-series-series-block {
+    /* Base styles */
+    padding: 20px;
+    margin: 0;
+    position: relative;
+    min-height: 100px;
+}
+
+/* Placeholder styles */
+.wp-block-custom-series-series-block .series-placeholder {
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Ensure alignment styles work */
+.wp-block-custom-series-series-block.aligncenter {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-block-custom-series-series-block.alignwide {
+    max-width: 100%;
+}
+
+.wp-block-custom-series-series-block.alignfull {
+    max-width: 100%;
+}
+
+/* Series content styles */
+.wp-block-custom-series-series-block .series-title {
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+
+.wp-block-custom-series-series-block .series-posts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.wp-block-custom-series-series-block .series-posts li {
+    margin-bottom: 0.5em;
+}
+
+.wp-block-custom-series-series-block .series-posts a {
+    text-decoration: none;
+}
+
+.wp-block-custom-series-series-block .series-posts a:hover {
+    text-decoration: underline;
+} 
