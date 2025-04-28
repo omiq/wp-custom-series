@@ -44,10 +44,22 @@
             const seriesValue = $('select[name="series_bulk_edit"]').val();
             const newSeriesName = $('input[name="new_series_name"]').val();
 
+            // Find the nonce field by its prefix
+            let nonceValue = '';
+            $('input[id^="custom_series_bulk_edit_nonce_"]').each(function() {
+                nonceValue = $(this).val();
+                return false; // Break the loop after finding the first match
+            });
+
+            if (!nonceValue) {
+                alert('Security verification failed. Please refresh the page and try again.');
+                return;
+            }
+
             // Prepare data for AJAX
             const data = {
                 action: 'custom_series_bulk_edit',
-                nonce: $('#custom_series_bulk_edit_nonce').val(),
+                nonce: nonceValue,
                 post_ids: selectedPosts,
                 series_value: seriesValue,
                 new_series_name: newSeriesName
