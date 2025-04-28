@@ -21,7 +21,7 @@ Custom Series Plugin allows you to organize your WordPress blog posts into conne
 * Bulk edit support for assigning multiple posts to a series at once
 * Series management page in admin
 * Shortcode to display posts in a series
-* Gutenberg block with extensive formatting options
+* Gutenberg block with formatting options
 * Custom titles and descriptions for each series
 
 = How to Use =
@@ -45,10 +45,9 @@ With specific series name:
 The plugin includes a Gutenberg block that provides the same functionality as the shortcode but with additional formatting options:
 
 * Alignment (left, center, right)
-* Show/hide series title and description
+* Show/hide series title
 * Custom colors for background, text, and title
 * Adjustable padding and margins
-* Border customization (width, color, radius)
 
 = Bulk Edit =
 
@@ -93,14 +92,33 @@ The plugin adds CSS classes that you can customize in your theme:
 == Changelog ==
 
 = 1.7 =
-* Added Gutenberg block with extensive formatting options
+* Added Gutenberg block with formatting options
 * Added bulk edit functionality for series assignment
 * Improved shortcode output
 
 = 1.6 =
+* Added quick edit support for series assignment
+* Improved series management interface
+
+= 1.5 =
 * Added series management page
-* Added support for series titles and descriptions
-* Improved shortcode output
+* Added ability to edit series titles and descriptions
+
+= 1.4 =
+* Added shortcode support
+* Improved series field display
+
+= 1.3 =
+* Fixed compatibility issues with WordPress 5.0
+* Improved code organization
+
+= 1.2 =
+* Added support for series descriptions
+* Improved admin interface
+
+= 1.1 =
+* Initial release with basic series functionality
+* Added series field to post editor
 
 = 1.0 =
 * Initial release
@@ -108,4 +126,11 @@ The plugin adds CSS classes that you can customize in your theme:
 == Upgrade Notice ==
 
 = 1.7 =
-Major update adding Gutenberg block support and bulk edit functionality for easier series management. 
+This version adds a Gutenberg block and bulk edit functionality for easier series management.
+
+== Screenshots ==
+
+1. Series field in post editor
+2. Series management page
+3. Gutenberg block in editor
+4. Series display on frontend 
