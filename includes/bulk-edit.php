@@ -23,8 +23,8 @@ function custom_series_bulk_edit_field() {
     // Generate a unique ID for the nonce field
     $nonce_id = 'custom_series_bulk_edit_nonce_' . uniqid();
     
-    // Add nonce for security
-    wp_nonce_field('custom_series_bulk_edit', 'custom_series_bulk_edit_nonce', false, true);
+    // Add nonce for security with the unique ID
+    wp_nonce_field('custom_series_bulk_edit', $nonce_id);
     ?>
     <fieldset class="inline-edit-col-right inline-edit-series">
         <div class="inline-edit-col">
@@ -67,13 +67,22 @@ add_action('admin_enqueue_scripts', 'custom_series_bulk_edit_enqueue_scripts');
 
 // Handle bulk edit save
 function custom_series_bulk_edit_save($post_id) {
-    // Check if our nonce is set
-    if (!isset($_POST['custom_series_bulk_edit_nonce'])) {
+    // Check if our nonce is set - we need to check for any nonce with our prefix
+    $nonce_found = false;
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'custom_series_bulk_edit_nonce_') === 0) {
+            $nonce_found = true;
+            $nonce_key = $key;
+            break;
+        }
+    }
+    
+    if (!$nonce_found) {
         return;
     }
 
     // Verify that the nonce is valid
-    if (!wp_verify_nonce($_POST['custom_series_bulk_edit_nonce'], 'custom_series_bulk_edit')) {
+    if (!wp_verify_nonce($_POST[$nonce_key], 'custom_series_bulk_edit')) {
         return;
     }
 
