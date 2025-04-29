@@ -180,24 +180,69 @@ const SeriesBlockSave = ({ attributes }) => {
         fontWeight,
         lineHeight,
         textTransform,
-        letterSpacing
+        letterSpacing,
+        style
     } = attributes;
     
-    const blockProps = useBlockProps.save({
-        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}${fontSize ? ` has-${fontSize}-font-size` : ''}${fontFamily ? ` has-${fontFamily}-font-family` : ''}`,
-        style: {
-            backgroundColor: backgroundColor ? `var(--wp--preset--color--${backgroundColor})` : undefined,
-            color: textColor ? `var(--wp--preset--color--${textColor})` : undefined,
-            borderColor: borderColor ? `var(--wp--preset--color--${borderColor})` : undefined,
-            borderWidth,
-            borderRadius,
-            fontSize: fontSize ? `var(--wp--preset--font-size--${fontSize})` : undefined,
-            fontFamily: fontFamily ? `var(--wp--preset--font-family--${fontFamily})` : undefined,
-            fontWeight,
-            lineHeight,
-            textTransform,
-            letterSpacing
+    // Build style object with proper formatting
+    const styleObject = {};
+    
+    if (backgroundColor) {
+        styleObject.backgroundColor = `var(--wp--preset--color--${backgroundColor})`;
+    }
+    if (textColor) {
+        styleObject.color = `var(--wp--preset--color--${textColor})`;
+    }
+    if (borderColor) {
+        styleObject.borderColor = `var(--wp--preset--color--${borderColor})`;
+    }
+    if (borderWidth) {
+        styleObject.borderWidth = borderWidth;
+    }
+    if (borderRadius) {
+        styleObject.borderRadius = borderRadius;
+    }
+    if (fontSize) {
+        styleObject.fontSize = `var(--wp--preset--font-size--${fontSize})`;
+    }
+    if (fontFamily) {
+        styleObject.fontFamily = `var(--wp--preset--font-family--${fontFamily})`;
+    }
+    if (fontWeight) {
+        styleObject.fontWeight = fontWeight;
+    }
+    if (lineHeight) {
+        styleObject.lineHeight = `${lineHeight}em`;
+    }
+    if (textTransform) {
+        styleObject.textTransform = textTransform;
+    }
+    if (letterSpacing) {
+        styleObject.letterSpacing = `${letterSpacing}px`;
+    }
+    
+    // Add spacing styles
+    if (style) {
+        if (style.spacing) {
+            const spacing = style.spacing;
+            if (spacing.margin) {
+                styleObject.marginTop = spacing.margin.top ? `${spacing.margin.top}em` : undefined;
+                styleObject.marginRight = spacing.margin.right ? `${spacing.margin.right}em` : undefined;
+                styleObject.marginBottom = spacing.margin.bottom ? `${spacing.margin.bottom}em` : undefined;
+                styleObject.marginLeft = spacing.margin.left ? `${spacing.margin.left}em` : undefined;
+            }
+            if (spacing.padding) {
+                styleObject.paddingTop = spacing.padding.top ? `${spacing.padding.top}em` : undefined;
+                styleObject.paddingRight = spacing.padding.right ? `${spacing.padding.right}em` : undefined;
+                styleObject.paddingBottom = spacing.padding.bottom ? `${spacing.padding.bottom}em` : undefined;
+                styleObject.paddingLeft = spacing.padding.left ? `${spacing.padding.left}em` : undefined;
+            }
         }
+    }
+    
+    const blockProps = useBlockProps.save({
+        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}${fontSize ? ` has-${fontSize}-font-size` : ''}${fontFamily ? ` has-${fontFamily}-font-family` : ''}${backgroundColor ? ` has-${backgroundColor}-background-color has-background` : ''}${textColor ? ` has-${textColor}-color has-text-color` : ''}${borderColor ? ` has-${borderColor}-border-color` : ''}`,
+        style: styleObject
     });
 
     return (
@@ -205,7 +250,7 @@ const SeriesBlockSave = ({ attributes }) => {
             {showTitle && seriesName && (
                 <h2 className="series-title">{seriesName}</h2>
             )}
-            <div className="series-posts">
+            <div className="series-posts" style={lineHeight ? { lineHeight: `${lineHeight}em` } : undefined}>
                 {/* This will be replaced with server-side rendered content */}
                 <div className="series-posts-container" data-series={seriesName}></div>
             </div>
@@ -276,6 +321,10 @@ registerBlockType('custom-series/series-block', {
         letterSpacing: {
             type: 'string',
             default: ''
+        },
+        style: {
+            type: 'object',
+            default: {}
         }
     },
     supports: {
