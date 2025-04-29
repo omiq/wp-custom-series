@@ -62,10 +62,14 @@ const SeriesBlockEdit = (props) => {
                 path: `/wp/v2/posts?per_page=100&meta_key=_series&meta_value=${encodeURIComponent(series)}&orderby=date&order=asc&_fields=id,title,link,date,meta`
             });
             
-            // Filter and sort posts
+            // Filter and sort posts - ensure we're getting the meta fields
             const filteredPosts = response
                 .filter(post => post.meta && post.meta._series === series)
-                .sort((a, b) => new Date(a.date) - new Date(b.date));
+                .sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateA - dateB;
+                });
             
             setPosts(filteredPosts);
             setError(null);
