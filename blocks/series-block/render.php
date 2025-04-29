@@ -83,25 +83,25 @@ function custom_series_render_block($attributes, $content, $block) {
         // Cache the results for 1 hour
         wp_cache_set($cache_key, $posts, '', HOUR_IN_SECONDS);
     }
-    
-    // Build style attributes
+
+    // Build style attributes from the attributes array
     $style_attrs = array();
     if (!empty($background_color)) {
-        $style_attrs[] = 'background-color: ' . esc_attr($background_color);
-    }
+        $style_attrs[] = 'background-color: var(--wp--preset--color--' . esc_attr($background_color) . ')';
+    }   
     if (!empty($text_color)) {
-        $style_attrs[] = 'color: ' . esc_attr($text_color);
+        $style_attrs[] = 'color: var(--wp--preset--color--' . esc_attr($text_color) . ')';
     }
     if (!empty($border_color)) {
-        $style_attrs[] = 'border-color: ' . esc_attr($border_color);
-    }
+        $style_attrs[] = 'border-color: var(--wp--preset--color--' . esc_attr($border_color) . ')';
+    }   
     if (!empty($border_width)) {
         $style_attrs[] = 'border-width: ' . esc_attr($border_width);
     }
     if (!empty($border_radius)) {
         $style_attrs[] = 'border-radius: ' . esc_attr($border_radius);
-    }
-    
+    }               
+
     // Start the block output
     $classes = 'wp-block-custom-series-block';
     if (!empty($alignment)) {
@@ -144,7 +144,6 @@ function custom_series_render_block($attributes, $content, $block) {
     }
     
     echo '</div>';
-    print_r($attributes);
     
     // Return the buffered content
     return ob_get_clean();
