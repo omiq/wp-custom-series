@@ -23,6 +23,11 @@ function custom_series_render_block($attributes, $content, $block) {
     $series_name = isset($attributes['seriesName']) ? $attributes['seriesName'] : '';
     $show_title = isset($attributes['showTitle']) ? $attributes['showTitle'] : true;
     $alignment = isset($attributes['alignment']) ? $attributes['alignment'] : '';
+    $background_color = isset($attributes['backgroundColor']) ? $attributes['backgroundColor'] : '';
+    $text_color = isset($attributes['textColor']) ? $attributes['textColor'] : '';
+    $border_color = isset($attributes['borderColor']) ? $attributes['borderColor'] : '';
+    $border_width = isset($attributes['borderWidth']) ? $attributes['borderWidth'] : '';
+    $border_radius = isset($attributes['borderRadius']) ? $attributes['borderRadius'] : '';
     
     // Get current post ID
     $current_post_id = get_the_ID();
@@ -79,13 +84,33 @@ function custom_series_render_block($attributes, $content, $block) {
         wp_cache_set($cache_key, $posts, '', HOUR_IN_SECONDS);
     }
     
+    // Build style attributes
+    $style_attrs = array();
+    if (!empty($background_color)) {
+        $style_attrs[] = 'background-color: ' . esc_attr($background_color);
+    }
+    if (!empty($text_color)) {
+        $style_attrs[] = 'color: ' . esc_attr($text_color);
+    }
+    if (!empty($border_color)) {
+        $style_attrs[] = 'border-color: ' . esc_attr($border_color);
+    }
+    if (!empty($border_width)) {
+        $style_attrs[] = 'border-width: ' . esc_attr($border_width);
+    }
+    if (!empty($border_radius)) {
+        $style_attrs[] = 'border-radius: ' . esc_attr($border_radius);
+    }
+    
     // Start the block output
     $classes = 'wp-block-custom-series-block';
     if (!empty($alignment)) {
         $classes .= ' align' . esc_attr($alignment);
     }
     
-    echo '<div class="' . esc_attr($classes) . '">';
+    $style = !empty($style_attrs) ? ' style="' . implode('; ', $style_attrs) . '"' : '';
+    
+    echo '<div class="' . esc_attr($classes) . '"' . $style . '>';
     
     // Show title if enabled
     if ($show_title && !empty($series_name)) {

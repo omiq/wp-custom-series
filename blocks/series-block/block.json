@@ -19,6 +19,26 @@
         "alignment": {
             "type": "string",
             "default": ""
+        },
+        "backgroundColor": {
+            "type": "string",
+            "default": ""
+        },
+        "textColor": {
+            "type": "string",
+            "default": ""
+        },
+        "borderColor": {
+            "type": "string",
+            "default": ""
+        },
+        "borderWidth": {
+            "type": "string",
+            "default": ""
+        },
+        "borderRadius": {
+            "type": "string",
+            "default": ""
         }
     },
     "supports": {
@@ -43,6 +63,6 @@
         "file": "./build/index.js",
         "type": "module"
     },
-    "style": "file:../../assets/css/frontend.css",
+    "style": "file:./style-index.css",
     "editorStyle": "file:./editor.css"
 } 

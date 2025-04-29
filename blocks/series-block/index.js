@@ -23,6 +23,13 @@ const SeriesBlockEdit = (props) => {
     const [posts, setPosts] = useState([]);
     const [postsLoading, setPostsLoading] = useState(false);
 
+    // Helper function to safely extract title text
+    const getTitleText = (title) => {
+        if (typeof title === 'string') return title;
+        if (title && typeof title === 'object' && title.rendered) return title.rendered;
+        return '';
+    };
+
     const blockProps = useBlockProps({
         className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`
     });
@@ -63,8 +70,13 @@ const SeriesBlockEdit = (props) => {
                 parse: true
             });
             
-            // Filter posts by series
-            const filteredPosts = response.filter(post => post.meta && post.meta._series === series);
+            // Filter posts by series and ensure title is properly handled
+            const filteredPosts = response
+                .filter(post => post.meta && post.meta._series === series)
+                .map(post => ({
+                    ...post,
+                    title: getTitleText(post.title)
+                }));
             
             setPosts(filteredPosts);
             setError(null);
@@ -108,22 +120,8 @@ const SeriesBlockEdit = (props) => {
                         checked={showTitle}
                         onChange={(value) => setAttributes({ showTitle: value })}
                     />
+                   
                 </PanelBody>
-                <PanelColorGradientSettings
-                    title={__('Color Settings', 'custom-series')}
-                    settings={[
-                        {
-                            colorValue: attributes.backgroundColor,
-                            onColorChange: (value) => setAttributes({ backgroundColor: value }),
-                            label: __('Background Color', 'custom-series'),
-                        },
-                        {
-                            colorValue: attributes.textColor,
-                            onColorChange: (value) => setAttributes({ textColor: value }),
-                            label: __('Text Color', 'custom-series'),
-                        },
-                    ]}
-                />
             </InspectorControls>
             <div {...blockProps}>
                 {loading ? (
@@ -155,8 +153,7 @@ const SeriesBlockEdit = (props) => {
                             <ul className="series-posts-list">
                                 {posts.map((post) => (
                                     <li key={post.id} className="series-post-item">
-                                        <a href={post.link}>{post.title}</a>
-                                        <span className="post-date">{new Date(post.date).toLocaleDateString()}</span>
+                                        <a href={post.link}>{getTitleText(post.title)}</a>
                                     </li>
                                 ))}
                             </ul>
@@ -170,10 +167,17 @@ const SeriesBlockEdit = (props) => {
 
 // Server-side rendering for the frontend
 const SeriesBlockSave = ({ attributes }) => {
-    const { seriesName, showTitle, alignment } = attributes;
+    const { seriesName, showTitle, alignment, backgroundColor, textColor, borderColor, borderWidth, borderRadius } = attributes;
     
     const blockProps = useBlockProps.save({
-        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`
+        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`,
+        style: {
+            backgroundColor,
+            color: textColor,
+            borderColor,
+            borderWidth,
+            borderRadius
+        }
     });
 
     return (
@@ -216,6 +220,18 @@ registerBlockType('custom-series/series-block', {
         textColor: {
             type: 'string',
             default: ''
+        },
+        borderColor: {
+            type: 'string',
+            default: ''
+        },
+        borderWidth: {
+            type: 'string',
+            default: ''
+        },
+        borderRadius: {
+            type: 'string',
+            default: ''
         }
     },
     supports: {
@@ -229,7 +245,6 @@ registerBlockType('custom-series/series-block', {
         border: {
             color: true,
             radius: true,
-            style: true,
             width: true
         },
         spacing: {
