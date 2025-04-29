@@ -40,7 +40,7 @@
     },
     "textdomain": "custom-series",
     "editorScript": {
-        "file": "./index.js",
+        "file": "./build/index.js",
         "type": "module"
     },
     "style": "file:../../assets/css/frontend.css",
