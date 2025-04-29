@@ -30,6 +30,8 @@ const SeriesBlockEdit = (props) => {
     const fetchSeries = useCallback(async () => {
         try {
             setLoading(true);
+
+            // Get all posts to extract series names
             const posts = await apiFetch({
                 path: '/wp/v2/posts?per_page=100&_fields=id,meta'
             });
@@ -54,13 +56,16 @@ const SeriesBlockEdit = (props) => {
         
         try {
             setPostsLoading(true);
+
+            // Get posts in chronological order (oldest first)
             const response = await apiFetch({
-                path: `/wp/v2/posts?per_page=100&meta_key=_series&meta_value=${encodeURIComponent(series)}`
+                path: `/wp/v2/posts?per_page=100&meta_key=_series&meta_value=${encodeURIComponent(series)}&orderby=date&order=asc&_fields=id,title,link,date`
             });
             
-            const filteredPosts = response.filter(post => {
-                return post.meta && post.meta._series === series;
-            });
+            // Filter and sort posts
+            const filteredPosts = response
+                .filter(post => post.meta && post.meta._series === series)
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
             
             setPosts(filteredPosts);
             setError(null);
@@ -148,10 +153,11 @@ const SeriesBlockEdit = (props) => {
                             <h2 className="series-title">{seriesName}</h2>
                         )}
                         <div className="series-posts">
-                            <ul>
+                            <ul className="series-posts-list">
                                 {posts.map((post) => (
-                                    <li key={post.id}>
+                                    <li key={post.id} className="series-post-item">
                                         <a href={post.link}>{post.title}</a>
+                                        <span className="post-date">{new Date(post.date).toLocaleDateString()}</span>
                                     </li>
                                 ))}
                             </ul>
