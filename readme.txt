@@ -3,7 +3,7 @@ Contributors: chrisgarrett
 Tags: series, posts, content organization, blog
 Requires at least: 5.0
 Tested up to: 6.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -90,6 +90,17 @@ The plugin adds CSS classes that you can customize in your theme:
 7. Click "Update" to apply the changes to all selected posts
 
 == Changelog ==
+
+= 1.1.2 =
+* Fixed typography settings in Gutenberg block
+* Improved handling of WordPress preset spacing variables
+* Enhanced line height and spacing application
+* Removed debug output from frontend
+
+= 1.1.1 =
+* Fixed color handling in Gutenberg block
+* Improved style attribute handling
+* Enhanced typography settings support
 
 = 1.7 =
 * Added Gutenberg block with formatting options

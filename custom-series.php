@@ -3,7 +3,7 @@
  * Plugin Name:       Custom Series
  * Plugin URI:        https://hivewp.com/custom-series/
  * Description:       Manage, interlink, and display posts as part of a series.
- * Version:           1.1.1
+ * Version:           1.1.2
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Chris Garrett
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define constants
-define('CUSTOM_SERIES_VERSION', '1.1.1');
+define('CUSTOM_SERIES_VERSION', '1.1.2');
 define('CUSTOM_SERIES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('CUSTOM_SERIES_PLUGIN_URL', plugin_dir_url(__FILE__));
 
