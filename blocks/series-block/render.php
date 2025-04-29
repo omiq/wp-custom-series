@@ -42,9 +42,9 @@ function custom_series_render_block($attributes, $content, $block) {
     $letter_spacing = isset($attributes['letterSpacing']) ? $attributes['letterSpacing'] : '';
     
     // Debug output
-    error_log('Typography settings:');
-    error_log('Line Height: ' . print_r($line_height, true));
-    error_log('Full typography array: ' . print_r($typography, true));
+    // error_log('Typography settings:');
+    // error_log('Line Height: ' . print_r($line_height, true));
+    // error_log('Full typography array: ' . print_r($typography, true));
     
     // Get spacing settings
 
