@@ -120,7 +120,6 @@ const SeriesBlockEdit = (props) => {
                         checked={showTitle}
                         onChange={(value) => setAttributes({ showTitle: value })}
                     />
-                   
                 </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
@@ -167,16 +166,37 @@ const SeriesBlockEdit = (props) => {
 
 // Server-side rendering for the frontend
 const SeriesBlockSave = ({ attributes }) => {
-    const { seriesName, showTitle, alignment, backgroundColor, textColor, borderColor, borderWidth, borderRadius } = attributes;
+    const { 
+        seriesName, 
+        showTitle, 
+        alignment, 
+        backgroundColor, 
+        textColor, 
+        borderColor, 
+        borderWidth, 
+        borderRadius,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        lineHeight,
+        textTransform,
+        letterSpacing
+    } = attributes;
     
     const blockProps = useBlockProps.save({
-        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}`,
+        className: `wp-block-custom-series-series-block${alignment ? ` align${alignment}` : ''}${fontSize ? ` has-${fontSize}-font-size` : ''}${fontFamily ? ` has-${fontFamily}-font-family` : ''}`,
         style: {
-            backgroundColor,
-            color: textColor,
-            borderColor,
+            backgroundColor: backgroundColor ? `var(--wp--preset--color--${backgroundColor})` : undefined,
+            color: textColor ? `var(--wp--preset--color--${textColor})` : undefined,
+            borderColor: borderColor ? `var(--wp--preset--color--${borderColor})` : undefined,
             borderWidth,
-            borderRadius
+            borderRadius,
+            fontSize: fontSize ? `var(--wp--preset--font-size--${fontSize})` : undefined,
+            fontFamily: fontFamily ? `var(--wp--preset--font-family--${fontFamily})` : undefined,
+            fontWeight,
+            lineHeight,
+            textTransform,
+            letterSpacing
         }
     });
 
@@ -232,6 +252,30 @@ registerBlockType('custom-series/series-block', {
         borderRadius: {
             type: 'string',
             default: ''
+        },
+        fontSize: {
+            type: 'string',
+            default: ''
+        },
+        fontFamily: {
+            type: 'string',
+            default: ''
+        },
+        fontWeight: {
+            type: 'string',
+            default: ''
+        },
+        lineHeight: {
+            type: 'string',
+            default: ''
+        },
+        textTransform: {
+            type: 'string',
+            default: ''
+        },
+        letterSpacing: {
+            type: 'string',
+            default: ''
         }
     },
     supports: {
@@ -253,7 +297,11 @@ registerBlockType('custom-series/series-block', {
         },
         typography: {
             fontSize: true,
-            lineHeight: true
+            lineHeight: true,
+            fontFamily: true,
+            fontWeight: true,
+            textTransform: true,
+            letterSpacing: true
         }
     },
     edit: SeriesBlockEdit,

@@ -29,6 +29,14 @@ function custom_series_render_block($attributes, $content, $block) {
     $border_width = isset($attributes['borderWidth']) ? $attributes['borderWidth'] : '';
     $border_radius = isset($attributes['borderRadius']) ? $attributes['borderRadius'] : '';
     
+    // Get typography settings
+    $font_size = isset($attributes['fontSize']) ? $attributes['fontSize'] : '';
+    $font_family = isset($attributes['fontFamily']) ? $attributes['fontFamily'] : '';
+    $font_weight = isset($attributes['fontWeight']) ? $attributes['fontWeight'] : '';
+    $line_height = isset($attributes['lineHeight']) ? $attributes['lineHeight'] : '';
+    $text_transform = isset($attributes['textTransform']) ? $attributes['textTransform'] : '';
+    $letter_spacing = isset($attributes['letterSpacing']) ? $attributes['letterSpacing'] : '';
+    
     // Get current post ID
     $current_post_id = get_the_ID();
     
@@ -102,10 +110,38 @@ function custom_series_render_block($attributes, $content, $block) {
         $style_attrs[] = 'border-radius: ' . esc_attr($border_radius);
     }               
 
+    // Add typography styles
+    if (!empty($font_size)) {
+        $style_attrs[] = 'font-size: var(--wp--preset--font-size--' . esc_attr($font_size) . ')';
+    }
+    if (!empty($font_family)) {
+        $style_attrs[] = 'font-family: var(--wp--preset--font-family--' . esc_attr($font_family) . ')';
+    }
+    if (!empty($font_weight)) {
+        $style_attrs[] = 'font-weight: ' . esc_attr($font_weight);
+    }
+    if (!empty($line_height)) {
+        $style_attrs[] = 'line-height: ' . esc_attr($line_height);
+    }
+    if (!empty($text_transform)) {
+        $style_attrs[] = 'text-transform: ' . esc_attr($text_transform);
+    }
+    if (!empty($letter_spacing)) {
+        $style_attrs[] = 'letter-spacing: ' . esc_attr($letter_spacing);
+    }
+
     // Start the block output
     $classes = 'wp-block-custom-series-block';
     if (!empty($alignment)) {
         $classes .= ' align' . esc_attr($alignment);
+    }
+    
+    // Add typography classes
+    if (!empty($font_size)) {
+        $classes .= ' has-' . esc_attr($font_size) . '-font-size';
+    }
+    if (!empty($font_family)) {
+        $classes .= ' has-' . esc_attr($font_family) . '-font-family';
     }
     
     $style = !empty($style_attrs) ? ' style="' . implode('; ', $style_attrs) . '"' : '';
