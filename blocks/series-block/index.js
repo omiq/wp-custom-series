@@ -59,7 +59,8 @@ const SeriesBlockEdit = (props) => {
 
             // Get posts in chronological order (oldest first)
             const response = await apiFetch({
-                path: `/wp/v2/posts?per_page=100&meta_key=_series&meta_value=${encodeURIComponent(series)}&orderby=date&order=asc&_fields=id,title,link,date,meta`
+                path: `/wp/v2/posts?per_page=100&meta_key=_series&meta_value=${encodeURIComponent(series)}&orderby=date&order=asc&_fields=id,title,link,date,meta`,
+                parse: true
             });
             
             // Filter posts by series
