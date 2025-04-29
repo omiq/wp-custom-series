@@ -144,6 +144,7 @@ function custom_series_render_block($attributes, $content, $block) {
     }
     
     echo '</div>';
+    print_r($attributes);
     
     // Return the buffered content
     return ob_get_clean();

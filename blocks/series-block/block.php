@@ -173,6 +173,6 @@ function render_series_block($attributes) {
     
     // Wrap the content in a div with the inline styles
     $output = '<div class="custom-series" style="' . $style . '">' . $list_content . '</div>';
-    
+    $output .= print_r($attributes, true);
     return $output;
 } 
